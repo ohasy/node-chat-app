@@ -18,6 +18,12 @@ var io = socketIO(server);
 //     extended: true
 //   }));
 
+//for heroku.
+io.configure(function () { 
+    io.set("transports", ["xhr-polling"]); 
+    io.set("polling duration", 10); 
+  });
+
 io.on('connection',(socket)=>{
     console.log('New user connected')
     
