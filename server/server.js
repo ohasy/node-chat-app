@@ -12,7 +12,7 @@ var app = express();
 
 // }) 
 //can be replaced by 
-var server = https.createServer(app);
+var server = http.createServer(app);
 var io = socketIO(server);
 // app.use(bodyParser.urlencoded({
 //     extended: true
