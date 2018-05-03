@@ -1,6 +1,6 @@
 const path = require('path');
 const publicPath = path.join(__dirname,'../public');
-
+const https = require('https');
 const http = require('http');
 const socketIO = require('socket.io');
 console.log(publicPath);
@@ -12,17 +12,17 @@ var app = express();
 
 // }) 
 //can be replaced by 
-var server = http.createServer(app);
+var server = https.createServer(app);
 var io = socketIO(server);
 // app.use(bodyParser.urlencoded({
 //     extended: true
 //   }));
 
 //for heroku.
-io.configure(function () { 
-    io.set("transports", ["xhr-polling"]); 
-    io.set("polling duration", 10); 
-  });
+// io.configure(function () { 
+//     io.set("transports", ["xhr-polling"]); 
+//     io.set("polling duration", 10); 
+//   });
 
 io.on('connection',(socket)=>{
     console.log('New user connected')
