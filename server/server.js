@@ -8,6 +8,7 @@ const express = require('express');
 const bodyparser = require('body-parser');
 const port = process.env.PORT || 3000
 var app = express();
+var {generateMessage} = require('./utils/message');
 // var server = http.createServer((req,res)=>{
 
 // }) 
@@ -28,15 +29,18 @@ io.on('connection',(socket)=>{
     console.log('New user connected')
     
     // socket.emit('newMessage',{from:"yash@nodues.com",text:"yoman",createdAt:123});
+    socket.emit('newMessage',generateMessage("Admin","Welcome to the chat app"))
+    socket.broadcast.emit('newMessage',generateMessage("Admin","new user has joined."))
 
-    socket.on('createMessage',(msg)=>{
-        console.log('createMessage',msg);
+    socket.on('createMessage',(message)=>{
+        console.log('createMessage',message);
 
-        io.emit('newMessage',{
-            from:msg.from,
-            text:msg.text,
-            createdAt: new Date().getTime()
-        })
+        // io.emit('newMessage',{
+        //     from:msg.from,
+        //     text:msg.text,
+        //     createdAt: new Date().getTime()
+        // })
+        socket.broadcast.emit('newMessage',generateMessage(message.from,message.text))
     })
     socket.on('disconnect',()=>{
         console.log('Client Disconnected')
