@@ -8,7 +8,7 @@ const express = require('express');
 const bodyparser = require('body-parser');
 const port = process.env.PORT || 3000
 var app = express();
-var {generateMessage} = require('./utils/message');
+var {generateMessage,generateLocationMessage} = require('./utils/message');
 // var server = http.createServer((req,res)=>{
 
 // }) 
@@ -30,6 +30,7 @@ io.on('connection',(socket)=>{
     
     // socket.emit('newMessage',{from:"yash@nodues.com",text:"yoman",createdAt:123});
     socket.emit('newMessage',generateMessage("Admin","Welcome to the chat app"))
+
     socket.broadcast.emit('newMessage',generateMessage("Admin","new user has joined."))
 
     socket.on('createMessage',(message,callback)=>{
@@ -38,12 +39,14 @@ io.on('connection',(socket)=>{
         callback('This is from the server.')
         // socket.broadcast.emit('newMessage',generateMessage(message.from,message.text))
     })
+
     socket.on('createLocationMessage',(coords,callback)=>{
         console.log('Coords:',coords);
-        io.emit('newMessage',generateMessage('Admin',`${coords.latitude}, ${coords.longitude}`))
+        io.emit('newLocationMessage',generateLocationMessage('Admin',coords.latitude,coords.longitude))
         callback('Location sent successfully.')
         // socket.broadcast.emit('newMessage',generateMessage(message.from,message.text))
     })
+
     socket.on('disconnect',()=>{
         console.log('Client Disconnected')
     })
