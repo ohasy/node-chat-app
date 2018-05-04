@@ -13,10 +13,19 @@ socket.on('disconnect',function(){
 
 socket.on('newMessage',function(message){
     var formattedTime = moment(message.createdAt).format('h:mm a')//h:mm a MMM Do YYYY
-    console.log('New msg',message);
-    var li = jQuery('<li></li>');
-    li.text(`${message.from} ${formattedTime} :${message.text}`)
-    jQuery('#messages').append(li)
+    var template = jQuery('#message-template').html();
+    var html = Mustache.render(template,{
+        text:message.text,
+        from:message.from,
+        createdAt:formattedTime
+    });
+
+    jQuery('#messages').append(html);
+  
+    // console.log('New msg',message);
+    // var li = jQuery('<li></li>');
+    // li.text(`${message.from} ${formattedTime} :${message.text}`)
+    // jQuery('#messages').append(li)
 })
 
 var messageTextBox = jQuery('[name=message]')
@@ -35,13 +44,22 @@ jQuery('#message-form').on('submit',function(e){
 
 socket.on('newLocationMessage',function(message){
     var formattedTime = moment(message.createdAt).format('h:mm a')//h:mm a MMM Do YYYY
-    var li = jQuery('<li></li>')
-    var a = jQuery('<a target="_blank">My Current Location</a>');
+    var template = jQuery('#location-message-template').html();
+    var html = Mustache.render(template,{
+        url:message.url,
+        from:message.from,
+        createdAt:formattedTime
+    });
 
-    li.text(`${message.from} ${formattedTime} `)
-    a.attr('href',message.url)
-    li.append(a)
-    jQuery('#messages').append(li) 
+    jQuery('#messages').append(html);
+    // var formattedTime = moment(message.createdAt).format('h:mm a')//h:mm a MMM Do YYYY
+    // var li = jQuery('<li></li>')
+    // var a = jQuery('<a target="_blank">My Current Location</a>');
+
+    // li.text(`${message.from} ${formattedTime} `)
+    // a.attr('href',message.url)
+    // li.append(a)
+    // jQuery('#messages').append(li) 
 })
 
 var locationButton = jQuery('#send-location');
@@ -57,6 +75,7 @@ locationButton.on('click', function(){
         locationButton.removeAttr('disabled').text('Send location');
         console.log("position:",position);
             socket.emit('createLocationMessage',{
+                    from:'User',
                     latitude: position.coords.latitude,
                     longitude:position.coords.longitude,
             },function(fromServer){

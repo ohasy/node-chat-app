@@ -42,7 +42,7 @@ io.on('connection',(socket)=>{
 
     socket.on('createLocationMessage',(coords,callback)=>{
         console.log('Coords:',coords);
-        io.emit('newLocationMessage',generateLocationMessage('Admin',coords.latitude,coords.longitude))
+        io.emit('newLocationMessage',generateLocationMessage(coords.from,coords.latitude,coords.longitude))
         callback('Location sent successfully.')
         // socket.broadcast.emit('newMessage',generateMessage(message.from,message.text))
     })
