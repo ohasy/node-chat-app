@@ -38,6 +38,12 @@ io.on('connection',(socket)=>{
         callback('This is from the server.')
         // socket.broadcast.emit('newMessage',generateMessage(message.from,message.text))
     })
+    socket.on('createLocationMessage',(coords,callback)=>{
+        console.log('Coords:',coords);
+        io.emit('newMessage',generateMessage('Admin',`${coords.latitude}, ${coords.longitude}`))
+        callback('Location sent successfully.')
+        // socket.broadcast.emit('newMessage',generateMessage(message.from,message.text))
+    })
     socket.on('disconnect',()=>{
         console.log('Client Disconnected')
     })
