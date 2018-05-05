@@ -56,7 +56,7 @@ io.on('connection',(socket)=>{
         //socket.brodcast.to(params.room).emit
         //socket.emit
 
-        socket.emit('newMessage',generateMessage("Admin","Welcome to the time kill app"))
+        socket.emit('newMessage',generateMessage("Admin","Welcome to the people's app"))
 
         socket.broadcast.to(params.room).emit('newMessage',generateMessage("Admin",`${params.name} has joined.`))
         
@@ -64,15 +64,27 @@ io.on('connection',(socket)=>{
     });
 
     socket.on('createMessage',(message,callback)=>{
-        console.log('createMessage',message);
-        io.emit('newMessage',generateMessage(message.from,message.text))
+        // console.log('createMessage',message);
+        var user = users.getUser(socket.id);
+
+        if(user && isRealString(message.text)){
+            io.to(user.room).emit('newMessage',generateMessage(user.name,message.text))
+        }
+
+      
+
         callback()
         // socket.broadcast.emit('newMessage',generateMessage(message.from,message.text))
     })
 
     socket.on('createLocationMessage',(coords,callback)=>{
-        console.log('Coords:',coords);
-        io.emit('newLocationMessage',generateLocationMessage(coords.from,coords.latitude,coords.longitude))
+        // console.log('Coords:',coords);
+        var user = users.getUser(socket.id);
+
+        if(user){
+            io.to(user.room).emit('newLocationMessage',generateLocationMessage(user.name,coords.latitude,coords.longitude))
+        }
+        
         callback('Location sent successfully.')
         // socket.broadcast.emit('newMessage',generateMessage(message.from,message.text))
     })
